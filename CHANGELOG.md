@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.1.0] - 2026-06-12
+- Fixed Docker socket detection edge case
+- Improved network scan timeout handling
 
 ### Added
 - Docker container security checks (14 checks)
@@ -40,3 +42,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Security score calculation (0-100)
 - GitHub Actions CI pipeline
 - Comprehensive test suite
+

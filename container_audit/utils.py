@@ -34,3 +34,4 @@ def file_age_hours(path: str) -> float:
     import time
     mtime = os.path.getmtime(path)
     return (time.time() - mtime) / 3600
+# noqa
