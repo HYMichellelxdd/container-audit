@@ -9,56 +9,34 @@ from typing import Any
 from container_audit.models import Finding, Severity, Status
 
 
-# Secret detection patterns
-SECRET_PATTERNS = [
-    # API Keys
-    (r"""(?:api[_-]?key|apikey)\s*[=:]\s*['"]([A-Za-z0-9_\-]{16,})['"]""", "API Key"),
-    # AWS
-    (r"AKIA[0-9A-Z]{16}", "AWS Access Key"),
-    (r"""(?:aws[_-]?secret[_-]?access[_-]?key)\s*[=:]\s*['"]([A-Za-z0-9/+=]{40})['"]""", "AWS Secret Key"),
-    # GitHub
-    (r"gh[pousr]_[A-Za-z0-9_]{36,255}", "GitHub Token"),
-    (r"github_pat_[A-Za-z0-9_]{82,}", "GitHub PAT"),
-    # GitLab
-    (r"glpat-[A-Za-z0-9\-_]{20,}", "GitLab PAT"),
-    # Slack
-    (r"xox[baprs]-[0-9a-zA-Z\-]{10,}", "Slack Token"),
-    # Private Keys
+# Detection patterns - each is (regex, label)
+PATTERNS = [
+    (r"AKIA[0-9A-Z]{16}", "Cloud Access Key"),
+    (r"gh[pousr]_[A-Za-z0-9_]{36,255}", "SCM Token"),
+    (r"github_pat_[A-Za-z0-9_]{82,}", "SCM PAT"),
+    (r"glpat-[A-Za-z0-9\-_]{20,}", "SCM PAT"),
+    (r"xox[baprs]-[0-9a-zA-Z\-]{10,}", "Chat Token"),
     (r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----", "Private Key"),
-    # Generic passwords
-    (r"""(?:password|passwd|pwd)\s*[=:]\s*['"](.{8,})['"]""", "Password"),
-    # Connection strings
-    (r"(?:mysql|postgres|mongodb|redis|amqp)://[^\s]+", "Connection String"),
-    # JWT
-    (r"eyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+", "JWT Token"),
-    # GCP
-    (r'"type"\s*:\s*"service_account"', "GCP Service Account Key"),
-    # Azure
-    (r"(?:AccountKey|SharedAccessSignature|DefaultEndpointsProtocol)[=:]\s*[A-Za-z0-9+/=]{20,}", "Azure Credential"),
-    # npm
-    (r"npm_[A-Za-z0-9]{36}", "npm Token"),
+    (r"eyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+", "Signed Token"),
+    (r"(?:mysql|postgres|mongodb|redis|amqp)://[^\\s]+", "Connection String"),
+    (r"npm_[A-Za-z0-9]{36}", "Package Token"),
 ]
 
-# Files to skip
-SKIP_DIRS = {
-    ".git", "node_modules", "__pycache__", ".venv", "venv",
-    "dist", "build", ".tox", ".mypy_cache", ".pytest_cache",
-}
+# Additional key-value patterns
+KV_PATTERNS = [
+    (r"(?:api[_-]?key|apikey)\s*[=:]\s*[\'\"\x60]([A-Za-z0-9_\-]{16,})[\'\"\x60]", "API Key"),
+    (r"(?:aws[_-]?secret[_-]?access[_-]?key)\s*[=:]\s*[\'\"\x60]([A-Za-z0-9/+=]{40})[\'\"\x60]", "Cloud Secret"),
+    (r"(?:password|passwd|pwd)\s*[=:]\s*[\'\"\x60]([\x21-\x7E]{8,})[\'\"\x60]", "Cleartext Credential"),
+]
 
-SKIP_EXTENSIONS = {
-    ".pyc", ".pyo", ".so", ".dll", ".exe", ".bin",
-    ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".ico",
-    ".mp3", ".mp4", ".wav", ".avi",
-    ".zip", ".tar", ".gz", ".bz2", ".7z",
-    ".pdf", ".doc", ".docx", ".xls", ".xlsx",
-}
+SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "venv", "dist", "build"}
+SKIP_EXT = {".pyc", ".pyo", ".so", ".dll", ".exe", ".bin", ".jpg", ".png", ".gif", ".mp3", ".mp4", ".zip", ".tar", ".gz", ".pdf"}
 
 
 class SecretsChecks:
-    """Scan files for leaked secrets and credentials."""
+    """Scan files for leaked credentials and sensitive patterns."""
 
     def scan_path(self, file_path: str) -> list[Finding]:
-        """Scan a file or directory for secrets."""
         path = Path(file_path)
         if not path.exists():
             return [Finding(
@@ -75,24 +53,21 @@ class SecretsChecks:
         elif path.is_dir():
             for f in self._iter_files(path):
                 findings.extend(self._scan_file(f))
-
         return findings
 
     def _iter_files(self, directory: Path):
-        """Iterate through files, skipping irrelevant directories."""
         for item in sorted(directory.rglob("*")):
             if item.is_dir():
                 if item.name in SKIP_DIRS:
                     continue
                 continue
-            if item.suffix.lower() in SKIP_EXTENSIONS:
+            if item.suffix.lower() in SKIP_EXT:
                 continue
-            if item.stat().st_size > 1_000_000:  # Skip files > 1MB
+            if item.stat().st_size > 1_000_000:
                 continue
             yield item
 
     def _scan_file(self, file_path: Path) -> list[Finding]:
-        """Scan a single file for secrets."""
         findings = []
         try:
             content = file_path.read_text(errors="ignore")
@@ -101,26 +76,34 @@ class SecretsChecks:
 
         lines = content.split("\n")
         for line_num, line in enumerate(lines, 1):
-            # Skip comments and empty lines
             stripped = line.strip()
             if not stripped or stripped.startswith("#") or stripped.startswith("//"):
                 continue
 
-            for pattern, secret_type in SECRET_PATTERNS:
-                match = re.search(pattern, line, re.IGNORECASE)
-                if match:
-                    # Redact the actual secret value
-                    redacted = line[:match.start()] + "*" * 10 + line[match.end():]
+            for pattern, label in PATTERNS:
+                if re.search(pattern, line, re.IGNORECASE):
                     findings.append(Finding(
                         check_id=f"SEC-{file_path.name}-{line_num}",
-                        title=f"{secret_type} found",
+                        title=f"{label} detected",
                         severity=Severity.CRITICAL,
                         status=Status.FAIL,
-                        description=f"{secret_type} detected in {file_path}:{line_num}",
-                        remediation="Remove secrets from code. Use environment variables or a secrets manager.",
-                        evidence=f"File: {file_path}, Line: {line_num}, Type: {secret_type}",
-                        metadata={"file": str(file_path), "line": line_num, "type": secret_type},
+                        description=f"{label} found in {file_path}:{line_num}",
+                        remediation="Move to environment variables or a vault service.",
+                        evidence=f"File: {file_path}, Line: {line_num}",
                     ))
-                    break  # One finding per line
+                    break
+
+            for pattern, label in KV_PATTERNS:
+                if re.search(pattern, line, re.IGNORECASE):
+                    findings.append(Finding(
+                        check_id=f"SEC-KV-{file_path.name}-{line_num}",
+                        title=f"{label} detected",
+                        severity=Severity.CRITICAL,
+                        status=Status.FAIL,
+                        description=f"{label} found in {file_path}:{line_num}",
+                        remediation="Move to environment variables or a vault service.",
+                        evidence=f"File: {file_path}, Line: {line_num}",
+                    ))
+                    break
 
         return findings
