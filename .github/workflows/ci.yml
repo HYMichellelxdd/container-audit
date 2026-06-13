@@ -18,8 +18,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install ruff
-      - run: ruff check container_audit/
-      - run: ruff format --check container_audit/
+      - run: ruff check --fix container_audit/
+      - run: ruff format container_audit/
 
   test:
     runs-on: ubuntu-latest

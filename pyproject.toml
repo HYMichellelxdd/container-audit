@@ -1,57 +1,58 @@
-[build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
-
-[project]
-name = "container-audit"
-version = "0.1.0"
-description = "Lightweight container security auditor for Docker and Kubernetes"
-readme = "README.md"
-license = {text = "MIT"}
-requires-python = ">=3.9"
-authors = [
-    {name = "HYMichellexdd", email = "contact@hyichellexdd.dev"},
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: System Administrators",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Security",
-    "Topic :: System :: Systems Administration",
-]
-keywords = ["security", "docker", "kubernetes", "container", "audit", "scanner", "devsecops"]
-dependencies = [
-    "pyyaml>=6.0",
-    "rich>=13.0",
-    "jinja2>=3.1",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "ruff>=0.1.0",
-]
-
-[project.scripts]
-container-audit = "container_audit.cli:main"
-
-[project.urls]
-Homepage = "https://github.com/HYMichellexdd/container-audit"
-Repository = "https://github.com/HYMichellexdd/container-audit"
-Issues = "https://github.com/HYMichellexdd/container-audit/issues"
-
-[tool.ruff]
-line-length = 100
-target-version = "py39"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-v --tb=short"
+     1|[build-system]
+     2|requires = ["setuptools>=68.0", "wheel"]
+     3|build-backend = "setuptools.build_meta"
+     4|
+     5|[project]
+     6|name = "container-audit"
+     7|version = "0.1.0"
+     8|description = "Lightweight container security auditor for Docker and Kubernetes"
+     9|readme = "README.md"
+    10|license = {text = "MIT"}
+    11|requires-python = ">=3.9"
+    12|authors = [
+    13|    {name = "HYMichellexdd", email = "contact@hyichellexdd.dev"},
+    14|]
+    15|classifiers = [
+    16|    "Development Status :: 4 - Beta",
+    17|    "Intended Audience :: Developers",
+    18|    "Intended Audience :: System Administrators",
+    19|    "License :: OSI Approved :: MIT License",
+    20|    "Operating System :: OS Independent",
+    21|    "Programming Language :: Python :: 3",
+    22|    "Programming Language :: Python :: 3.9",
+    23|    "Programming Language :: Python :: 3.10",
+    24|    "Programming Language :: Python :: 3.11",
+    25|    "Programming Language :: Python :: 3.12",
+    26|    "Topic :: Security",
+    27|    "Topic :: System :: Systems Administration",
+    28|]
+    29|keywords = ["security", "docker", "kubernetes", "container", "audit", "scanner", "devsecops"]
+    30|dependencies = [
+    31|    "pyyaml>=6.0",
+    32|    "rich>=13.0",
+    33|    "jinja2>=3.1",
+    34|]
+    35|
+    36|[project.optional-dependencies]
+    37|dev = [
+    38|    "pytest>=7.0",
+    39|    "pytest-cov>=4.0",
+    40|    "ruff>=0.1.0",
+    41|]
+    42|
+    43|[project.scripts]
+    44|container-audit = "container_audit.cli:main"
+    45|
+    46|[project.urls]
+    47|Homepage = "https://github.com/HYMichellexdd/container-audit"
+    48|Repository = "https://github.com/HYMichellexdd/container-audit"
+    49|Issues = "https://github.com/HYMichellexdd/container-audit/issues"
+    50|
+    51|[tool.ruff]
+    52|line-length = 100
+    53|target-version = "py39"
+    54|
+    55|[tool.pytest.ini_options]
+    56|testpaths = ["tests"]
+    57|addopts = "-v --tb=short"
+    58|
