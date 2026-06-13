@@ -74,10 +74,9 @@ def secure_container():
 def sample_secrets_file(tmp_path):
     """Create a file with detectable patterns for testing."""
     lines = [
-        "# Application config",
-        "APP_KEY=sk-test-1234567890abcdefghijklmnop",
-        "DB_CONN=postgres://admin:s3cret123@dbhost:5432/app",
-        "app_pass = \"mypass12345\"",
+        "APP_KEY='sk-test-1234567890abcdefghijklmnop'",
+        "DB_CONN='postgres://admin:s3cret123@dbhost:5432/app'",
+        "app_pass = 'mypass12345'",
         "-----BEGIN RSA PRIVATE KEY-----",
         "MIIEpAIBAAKCAQEA0Z3VS5JJcds3xfnygWyF8PbnGy5AH",
     ]

@@ -9,24 +9,24 @@ from typing import Any
 from container_audit.models import Finding, Severity, Status
 
 
-# Detection patterns - each is (regex, label)
+# Detection patterns: (regex, label)
 PATTERNS = [
     (r"AKIA[0-9A-Z]{16}", "Cloud Access Key"),
-    (r"gh[pousr]_[A-Za-z0-9_]{36,255}", "SCM Token"),
+    (r"gh[pousr]_[A-Za-z0-9_]{36,}", "SCM Token"),
     (r"github_pat_[A-Za-z0-9_]{82,}", "SCM PAT"),
-    (r"glpat-[A-Za-z0-9\-_]{20,}", "SCM PAT"),
+    (r"glpat-[A-Za-z0-9\-]{20,}", "SCM PAT"),
     (r"xox[baprs]-[0-9a-zA-Z\-]{10,}", "Chat Token"),
-    (r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----", "Private Key"),
-    (r"eyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+", "Signed Token"),
-    (r"(?:mysql|postgres|mongodb|redis|amqp)://[^\\s]+", "Connection String"),
+    (r"-----BEGIN .* PRIVATE KEY-----", "Private Key"),
+    (r"eyJ[A-Za-z0-9\-]+\.eyJ[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+", "Signed Token"),
+    (r"(?:mysql|postgres|mongodb|redis|amqp)://[^\s]+", "Connection String"),
     (r"npm_[A-Za-z0-9]{36}", "Package Token"),
 ]
 
-# Additional key-value patterns
+# Key-value patterns: (regex, label)
 KV_PATTERNS = [
-    (r"(?:api[_-]?key|apikey)\s*[=:]\s*[\'\"\x60]([A-Za-z0-9_\-]{16,})[\'\"\x60]", "API Key"),
-    (r"(?:aws[_-]?secret[_-]?access[_-]?key)\s*[=:]\s*[\'\"\x60]([A-Za-z0-9/+=]{40})[\'\"\x60]", "Cloud Secret"),
-    (r"(?:password|passwd|pwd)\s*[=:]\s*[\'\"\x60]([\x21-\x7E]{8,})[\'\"\x60]", "Cleartext Credential"),
+    (r"(?:api[_\-]?key|apikey)\s*[=:]\s*['\"]([A-Za-z0-9_\-]{16,})['\"]", "API Key"),
+    (r"(?:aws[_\-]?secret[_\-]?access[_\-]?key)\s*[=:]\s*['\"]([A-Za-z0-9/+=]{40})['\"]", "Cloud Secret"),
+    (r"(?:password|passwd|pwd)\s*[=:]\s*['\"](.{8,})['\"]", "Cleartext Credential"),
 ]
 
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "venv", "dist", "build"}
