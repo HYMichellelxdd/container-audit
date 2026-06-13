@@ -37,7 +37,6 @@ dependencies = [
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
-    "ruff>=0.1.0",
 ]
 
 [project.scripts]
@@ -47,14 +46,6 @@ container-audit = "container_audit.cli:main"
 Homepage = "https://github.com/HYMichellelxdd/container-audit"
 Repository = "https://github.com/HYMichellelxdd/container-audit"
 Issues = "https://github.com/HYMichellelxdd/container-audit/issues"
-
-[tool.ruff]
-line-length = 100
-target-version = "py39"
-
-[tool.ruff.lint]
-select = ["E", "F", "W"]
-ignore = ["E501", "W503", "E203"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

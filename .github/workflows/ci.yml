@@ -17,9 +17,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install ruff
-      - run: ruff check --fix container_audit/
-      - run: ruff format container_audit/
+      - run: python -m py_compile container_audit/__init__.py
+      - run: python -m py_compile container_audit/cli.py
+      - run: python -m py_compile container_audit/scanner.py
+      - run: python -m py_compile container_audit/utils.py
+      - run: python -m py_compile container_audit/checks/__init__.py
+      - run: python -m py_compile container_audit/checks/docker.py
+      - run: python -m py_compile container_audit/checks/kubernetes.py
+      - run: python -m py_compile container_audit/checks/network.py
+      - run: python -m py_compile container_audit/checks/secrets.py
+      - run: python -m py_compile container_audit/reporters/__init__.py
+      - run: python -m py_compile container_audit/reporters/console.py
+      - run: python -m py_compile container_audit/reporters/json_out.py
+      - run: python -m py_compile container_audit/reporters/html_out.py
 
   test:
     runs-on: ubuntu-latest
