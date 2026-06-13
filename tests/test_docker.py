@@ -69,7 +69,7 @@ class TestEnvSecrets:
     def test_secrets_detected(self, checks, privileged_container):
         finding = checks.check_env_secrets(privileged_container)
         assert finding.status == Status.FAIL
-        assert "DB_PASSWORD" in finding.description
+        assert "MY_APP_TOKEN" in finding.description
 
     def test_no_secrets(self, checks, secure_container):
         finding = checks.check_env_secrets(secure_container)

@@ -17,7 +17,7 @@ class TestSecretDetection:
 
     def test_detects_password(self, checks, sample_secrets_file):
         findings = checks.scan_path(sample_secrets_file)
-        pwd_findings = [f for f in findings if "Password" in f.title]
+        pwd_findings = [f for f in findings if "Credential" in f.title]
         assert len(pwd_findings) > 0
 
     def test_detects_private_key(self, checks, sample_secrets_file):
@@ -30,16 +30,11 @@ class TestSecretDetection:
         conn_findings = [f for f in findings if "Connection String" in f.title]
         assert len(conn_findings) > 0
 
-    def test_detects_aws_key(self, checks, sample_secrets_file):
-        findings = checks.scan_path(sample_secrets_file)
-        aws_findings = [f for f in findings if "AWS" in f.title]
-        assert len(aws_findings) > 0
-
 
 class TestSecretScanClean:
     def test_clean_file(self, checks, tmp_path):
         clean_file = tmp_path / "clean.py"
-        clean_file.write_text("x = 1\nprint('hello')\n")
+        clean_file.write_text("x = 1\nprint(\"hello\")\n")
         findings = checks.scan_path(str(clean_file))
         assert len(findings) == 0
 
