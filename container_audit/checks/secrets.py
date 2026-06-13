@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from container_audit.scanner import Finding, Severity, Status
+from container_audit.models import Finding, Severity, Status
 
 
 # Secret detection patterns

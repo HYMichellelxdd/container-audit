@@ -1,7 +1,7 @@
 """Tests for the scanner engine."""
 
 import pytest
-from container_audit.scanner import Finding, ScanResult, Severity, Status
+from container_audit.models import Finding, ScanResult, Severity, Status
 
 
 class TestScanResult:

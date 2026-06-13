@@ -13,7 +13,7 @@ try:
 except ImportError:
     HAS_RICH = False
 
-from container_audit.scanner import ScanResult, Severity, Status
+from container_audit.models import ScanResult, Severity, Status
 
 
 SEVERITY_COLORS = {

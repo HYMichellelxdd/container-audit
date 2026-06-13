@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from container_audit.scanner import ScanResult, Severity, Status
+from container_audit.models import ScanResult, Severity, Status
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>

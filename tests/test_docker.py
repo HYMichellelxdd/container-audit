@@ -2,7 +2,7 @@
 
 import pytest
 from container_audit.checks.docker import DockerChecks
-from container_audit.scanner import Severity, Status
+from container_audit.models import Severity, Status
 
 
 @pytest.fixture

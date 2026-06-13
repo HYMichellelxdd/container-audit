@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from container_audit.scanner import Finding, Severity, Status
+from container_audit.models import Finding, Severity, Status
 
 
 # Dangerous Linux capabilities

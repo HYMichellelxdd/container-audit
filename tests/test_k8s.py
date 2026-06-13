@@ -3,7 +3,7 @@
 import pytest
 import yaml
 from container_audit.checks.kubernetes import KubernetesChecks
-from container_audit.scanner import Severity, Status
+from container_audit.models import Severity, Status
 
 
 @pytest.fixture

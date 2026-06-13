@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from container_audit.scanner import ScanResult
+from container_audit.models import ScanResult
 
 
 class JsonReporter:
