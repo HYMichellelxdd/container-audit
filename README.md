@@ -1,325 +1,202 @@
 <p align="center">
-  <strong>Hermes Web UI</strong>
-  <a href="./README_zh.md">中文</a>
+  <img src="https://img.shields.io/badge/🔒-Container%20Audit-blueviolet?style=for-the-badge" alt="Container Audit"/>
+</p>
+
+<h1 align="center">Container Audit</h1>
+
+<p align="center">
+  <strong>Lightweight container security auditor for Docker and Kubernetes</strong>
 </p>
 
 <p align="center">
-  A full-featured web dashboard for <a href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a>.<br/>
-  Manage AI chat sessions, monitor usage & costs, configure platform channels,<br/>
-  schedule cron jobs, browse skills — all from a clean, responsive web interface.
-</p>
-
-<p align="center">
-  <code>npm install -g hermes-web-ui && hermes-web-ui start</code>
-</p>
-
-<p align="center">
-  <img src="https://github.com/EKKOLearnAI/hermes-web-ui/blob/main/packages/client/src/assets/image1.png" alt="Hermes Web UI Demo" width="680"/>
-</p>
-
-<p align="center">
-  <img src="https://github.com/EKKOLearnAI/hermes-web-ui/blob/main/packages/client/src/assets/image2.png" alt="Hermes Web UI Demo" width="680"/>
-</p>
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/hermes-web-ui"><img src="https://img.shields.io/npm/v/hermes-web-ui?style=flat-square&color=blue" alt="npm version"/></a>
-  <a href="https://github.com/EKKOLearnAI/hermes-web-ui/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/hermes-web-ui?style=flat-square" alt="license"/></a>
-  <a href="https://github.com/EKKOLearnAI/hermes-web-ui/stargazers"><img src="https://img.shields.io/github/stars/EKKOLearnAI/hermes-web-ui?style=flat-square" alt="stars"/></a>
+  <a href="https://github.com/HYMichellelxdd/container-audit/actions/workflows/ci.yml"><img src="https://github.com/HYMichellelxdd/container-audit/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/HYMichellelxdd/container-audit/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
+  <a href="https://pypi.org/project/container-audit/"><img src="https://img.shields.io/pypi/v/container-audit.svg" alt="PyPI"></a>
+  <a href="https://pypi.org/project/container-audit/"><img src="https://img.shields.io/pypi/pyversions/container-audit.svg" alt="Python"></a>
 </p>
 
 ---
 
-## Features
+## ✨ Features
 
-### AI Chat
+**Container Audit** is a fast, lightweight security scanner that helps developers and DevSecOps teams identify misconfigurations in Docker and Kubernetes environments.
 
-- Real-time chat streaming over Socket.IO `/chat-run`; chat runs execute through the Hermes agent bridge
-- Multi-session management — create, rename, delete, switch between sessions
-- **Self-built session database** — local SQLite storage for Web UI sessions; Hermes state.db remains a read-only source for Hermes history APIs
-- Session grouping by source (Telegram, Discord, Slack, etc.) with collapsible accordion
-- Active session indicator — live sessions pin to top with spinner icon
-- Sessions sorted by latest message time
-- Markdown rendering with syntax highlighting and code copy
-- Tool call detail expansion (arguments / result)
-- Profile-scoped file uploads
-- File download support — download uploaded files and agent-generated files by resolved path across local, Docker, SSH, and Singularity backends
-- Session search — Ctrl+K search across the Web UI local session database; read-only Hermes history sessions are not included
-- Profile-aware model selector — discovers models available to the signed-in account through authorized Hermes profiles
-- Per-session model display badge and context token usage
+- 🐳 **Docker Security** — 16 checks covering privileged mode, capabilities, secrets, socket permissions, and more
+- ☸️ **Kubernetes Compliance** — Pod Security, RBAC, NetworkPolicy, security context best practices
+- 🎚️ **Severity Filtering** — Filter findings by severity level
+- ⚡ **Fail-on Threshold** — Configurable exit code based on severity for CI/CD
+- 📊 **Multiple Reports** — Terminal (Rich), JSON, and HTML output
+- ⚡ **Security Score** — 0-100 score based on severity-weighted findings
 
-### Platform Channels
+## 🚀 Quick Start
 
-Unified configuration for **8 platforms** in one page:
-
-| Platform      | Features                                                               |
-| ------------- | ---------------------------------------------------------------------- |
-| Telegram      | Bot token, mention control, reactions, free-response chats             |
-| Discord       | Bot token, mention, auto-thread, reactions, channel allow/ignore lists |
-| Slack         | Bot token, mention control, bot message handling                       |
-| WhatsApp      | Enable/disable, mention control, mention patterns                      |
-| Matrix        | Access token, homeserver, auto-thread, DM mention threads              |
-| Feishu (Lark) | App ID / Secret, mention control                                       |
-| WeChat        | QR code login (scan in browser, auto-save credentials)                 |
-| WeCom         | Bot ID / Secret                                                        |
-
-- Credential management writes to `~/.hermes/.env`
-- Channel behavior settings write to `~/.hermes/config.yaml`
-- Per-platform configured/unconfigured status detection
-
-### Usage Analytics
-
-- Total token usage breakdown (input / output)
-- Session count with daily average
-- Estimated cost tracking & cache hit rate
-- Model usage distribution chart
-- 30-day daily trend (bar chart + data table)
-
-### Scheduled Jobs
-
-- Create, edit, pause, resume, delete cron jobs
-- Trigger immediate execution
-- Cron expression quick presets
-
-### Model Management
-
-- Auto-discover models from credential pool (`~/.hermes/auth.json`)
-- Fetch available models from each provider endpoint (`/v1/models`)
-- Add, update, and delete providers (preset & custom OpenAI-compatible)
-- OpenAI Codex & Nous Portal OAuth login
-- Provider URL auto-detection for non-v1 API versions (e.g. `/v4`)
-- Provider-level model grouping with default model switching
-
-### Multi-Profile
-
-- Create, rename, delete, and switch between Hermes profiles
-- Clone existing profile or import from archive (`.tar.gz`)
-- Export profile for backup or sharing
-- Profile-scoped configuration, cache, uploads, sessions, jobs, usage, memory, skills, plugins, providers, and model visibility
-- Account-bound profile access: super administrators can manage every profile; regular administrators only see and use profiles assigned to their account
-
-### File Browser
-
-- Browse files on remote backends (local, Docker, SSH, Singularity)
-- Upload, download, rename, copy, move, and delete files
-- Store uploaded files under the selected/requested Hermes profile while keeping downloads path-based for agent-generated artifacts outside the upload directory
-- Create directories
-- View file content with syntax highlighting
-
-### Group Chat
-
-- Multi-agent chat rooms with real-time messaging via Socket.IO
-- @mention routing — mention an agent to trigger a contextual reply
-- Context compression — automatic conversation summarization when history exceeds token threshold
-- Typing status and reply progress indicators
-- Room creation, deletion, and invite code management
-- Agent management — add/remove agents from rooms with per-agent profiles
-- SQLite message persistence
-- Mobile responsive with collapsible sidebar
-
-### Skills & Memory
-
-- Browse and search installed skills
-- View skill details and attached files
-- User notes and profile management
-
-### Logs
-
-- View agent / server / error logs
-- Filter by log level, log file, and keyword
-- Structured log parsing with HTTP access log highlighting
-
-### Authentication
-
-- Token-based auth (auto-generated on first run or set via `AUTH_TOKEN` env var)
-- Username/password login with account management in Settings
-- Default bootstrap credentials are `admin` / `123456`; users are prompted after login to change the default username and password
-- Super administrators can manage users and profile bindings; regular administrators can manage their own account details
-
-CLI maintenance commands:
+### Installation
 
 ```bash
-# Delete persisted login IP lock records
-hermes-web-ui clear-login-locks
-
-# Delete login locks and restart the running Web UI process
-hermes-web-ui clear-login-locks --restart
-
-# Create or reset the default super administrator login to admin / 123456
-hermes-web-ui reset-default-login
+pip install container-audit
 ```
 
-`clear-login-locks` removes `${HERMES_WEB_UI_HOME:-~/.hermes-web-ui}/.login-lock.json`. If the server is running, restart it to clear in-memory lock state. `reset-default-login` updates the Web UI account database; if an `admin` user already exists, its password is reset to `123456` and the account is enabled as a super administrator.
-
-### Settings
-
-- Display (streaming, compact mode, reasoning, cost display)
-- Agent (max turns, timeout, tool enforcement)
-- Memory (enable/disable, char limits)
-- Session reset (idle timeout, scheduled reset)
-- Privacy (PII redaction)
-- Model settings (default model & provider)
-- Profile and provider configuration
-
-### Web Terminal
-
-- Integrated terminal powered by node-pty and @xterm/xterm
-- Multi-session support — create, switch between, and close terminal sessions
-- Real-time keyboard input and PTY output streaming via WebSocket
-- Window resize support
-
----
-
-## Quick Start
-
-### npm (Recommended)
+### Basic Usage
 
 ```bash
-npm install -g hermes-web-ui
-hermes-web-ui start
+# Scan a Docker container
+container-audit docker my-container
+
+# Scan a docker-compose file
+container-audit compose docker-compose.yml
+
+# Scan Kubernetes manifests
+container-audit k8s ./k8s-manifests/
+
+# Only show high and critical findings
+container-audit docker my-container --severity high
+
+# Exit with error only on critical findings (for CI)
+container-audit docker my-container --fail-on critical
 ```
 
-Open **http://localhost:8648**
-
-### One-line Setup (Auto-detect OS)
-
-Automatically installs Node.js (if missing) and hermes-web-ui on Debian/Ubuntu/macOS:
+### Output Formats
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/EKKOLearnAI/hermes-web-ui/main/scripts/setup.sh)
+# JSON output (for CI/CD pipelines)
+container-audit docker my-container -f json -o report.json
+
+# HTML report (dark theme)
+container-audit docker my-container -f html -o report.html
+
+# Verbose terminal output
+container-audit docker my-container -v
 ```
 
-### WSL
+## 📋 Security Checks
 
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/EKKOLearnAI/hermes-web-ui/main/scripts/setup.sh)
-hermes-web-ui start
-```
+### Docker (16 checks)
 
-> WSL uses the same Web UI daemon startup flow as other local installs; no separate gateway service is started by Web UI.
+| Check | Severity | Description |
+|-------|----------|-------------|
+| `DOCKER-001` | 🔴 CRITICAL | Privileged container detection |
+| `DOCKER-002` | 🔴 CRITICAL | Docker socket mount detection |
+| `DOCKER-003` | 🟡 MEDIUM | Running as root user |
+| `DOCKER-004` | 🔴 HIGH | Dangerous capabilities (SYS_ADMIN, NET_ADMIN) |
+| `DOCKER-005` | 🟡 MEDIUM | Ports exposed on 0.0.0.0 |
+| `DOCKER-006` | 🔴 HIGH | Secrets in environment variables |
+| `DOCKER-007` | 🔵 LOW | Writable root filesystem |
+| `DOCKER-008` | 🟡 MEDIUM | Missing resource limits |
+| `DOCKER-009` | 🔵 LOW | No healthcheck configured |
+| `DOCKER-010` | 🔵 LOW | AppArmor profile status |
+| `DOCKER-011` | 🔵 LOW | Seccomp profile status |
+| `DOCKER-012` | 🔴 HIGH | Host PID namespace |
+| `DOCKER-013` | 🟡 MEDIUM | Host IPC namespace |
+| `DOCKER-014` | 🔴 HIGH | Host network mode |
+| `DOCKER-015` | 🔴 HIGH | Docker socket permissions |
+
+### Kubernetes
+
+| Check | Severity | Description |
+|-------|----------|-------------|
+| `K8S-PRIV-*` | 🔴 CRITICAL | Privileged containers |
+| `K8S-ROOT-*` | 🟡 MEDIUM | Running as root |
+| `K8S-CAPS-*` | 🔴 HIGH | Dangerous capabilities |
+| `K8S-PE-*` | 🟡 MEDIUM | Privilege escalation not disabled |
+| `K8S-SECCOMP-*` | 🔵 LOW | No seccomp profile |
+| `K8S-CAPDROP-*` | 🟡 MEDIUM | Capabilities not dropped |
+| `K8S-SA-TOKEN` | 🟡 MEDIUM | ServiceAccount token auto-mounted |
+| `K8S-HNET` | 🔴 HIGH | Host network enabled |
+| `K8S-HOSTPATH` | 🔴 HIGH | HostPath volumes |
+| `K8S-RBAC-*` | 🔴 HIGH | Overprivileged RBAC |
 
 ### Docker Compose
 
-Single-container deployment with integrated Hermes Agent:
+| Check | Severity | Description |
+|-------|----------|-------------|
+| `COMPOSE-*-001` | 🔴 CRITICAL | Privileged mode |
+| `COMPOSE-*-002` | 🔴 CRITICAL | Docker socket mounted |
+| `COMPOSE-*-003` | 🟡 MEDIUM | Running as root |
+| `COMPOSE-*-004` | 🔴 HIGH | Dangerous capabilities |
+| `COMPOSE-*-HEALTH` | 🔵 LOW | Healthcheck check |
+| `COMPOSE-*-RESTART` | 🔵 LOW | Restart policy |
+| `COMPOSE-*-ROFS` | 🔵 LOW | Read-only filesystem |
 
-```bash
-# Use pre-built image (Recommended)
-WEBUI_IMAGE=ekkoye8888/hermes-web-ui docker compose up -d
+## 📊 Report Example
 
-# Or build from source
-docker compose up -d --build
+```
+╭──────────── Security Report ────────────╮
+│  Container Audit Report                 │
+│  Target: my-container                   │
+│  Scan Type: docker                      │
+│  Score: 35/100                          │
+╰─────────────────────────────────────────╯
 
-docker compose logs -f hermes-webui
+Findings:
+  ✗  CRITICAL  Privileged container
+       → Remove --privileged flag.
+  ✗  CRITICAL  Docker socket mounted
+       → Avoid mounting Docker socket.
+  ✗     HIGH  Dangerous capabilities added
+       → Remove unnecessary capabilities.
+  ✓     HIGH  Host PID namespace
+  ✗   MEDIUM  Running as root
+       → Set USER directive in Dockerfile.
 ```
 
-Open **http://localhost:6060**
+## 🔧 CI/CD Integration
 
-- Persistent Hermes data is stored in `./hermes_data`
-- Web UI auth token is stored in `./hermes_data/hermes-web-ui/.token`
-- On first run with auth enabled, the token is printed to container logs
-- All runtime settings are environment-variable driven in `docker-compose.yml`
+### GitHub Actions
 
-For detailed notes and troubleshooting, see [`docs/docker.md`](./docs/docker.md).
+```yaml
+- name: Container Security Scan
+  run: |
+    pip install container-audit
+    container-audit docker ${{ env.IMAGE }} --fail-on critical
+```
 
-### Hermes Agent Runtime Discovery
+### Exit Codes
 
-When Web UI starts backend chat features, it prefers a source checkout that
-contains `run_agent.py` such as `~/.hermes/hermes-agent`. If no source checkout
-is found, it falls back to the Python environment used by the installed
-`hermes` command, then the system Python. This supports both source installs
-and package installs such as `pip install hermes-agent`.
+| Code | Meaning |
+|------|---------|
+| `0` | No findings above threshold |
+| `1` | Findings at or above `--fail-on` threshold |
 
-## Web UI Environment Variables
+## 📁 Project Structure
 
-These variables configure Hermes Web UI itself. Provider API keys and Hermes Agent settings are managed separately through Hermes profiles.
+```
+container-audit/
+├── container_audit/
+│   ├── __init__.py
+│   ├── cli.py              # CLI entry point
+│   ├── scanner.py           # Core scanning engine
+│   ├── models.py            # Data models
+│   ├── checks/
+│   │   ├── docker.py        # Docker security checks
+│   │   ├── kubernetes.py    # K8s manifest checks
+│   │   └── network.py       # Network exposure checks
+│   └── reporters/
+│       ├── console.py       # Rich terminal output
+│       ├── json_out.py      # JSON report
+│       └── html_out.py      # HTML report
+├── tests/
+├── .github/workflows/ci.yml
+├── pyproject.toml
+├── LICENSE
+└── README.md
+```
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `PORT` | `8648` | Web UI listen port. |
-| `BIND_HOST` | `0.0.0.0` | Web UI bind host. Set `::` explicitly for IPv6. |
-| `HERMES_WEB_UI_HOME` | `~/.hermes-web-ui` | Web UI data home for auth token, credentials, logs, DB, and default uploads. `HERMES_WEBUI_STATE_DIR` is also supported as a compatibility alias. |
-| `UPLOAD_DIR` | `$HERMES_WEB_UI_HOME/upload` | Upload root override. Files are stored below profile-scoped subdirectories. |
-| `CORS_ORIGINS` | `*` | Koa CORS origin setting. |
-| `AUTH_TOKEN` | auto-generated | Explicit bearer token. If unset, Web UI creates one under `HERMES_WEB_UI_HOME`. |
-| `PROFILE` | `default` | Startup/default Hermes profile. Runtime requests use the profile selected by the frontend and authorized for the current account. |
-| `LOG_LEVEL` | `info` | Server log level. |
-| `BRIDGE_LOG_LEVEL` | `$LOG_LEVEL` or `info` | Bridge log level. |
-| `MAX_DOWNLOAD_SIZE` | `200MB` | Maximum file download size. |
-| `MAX_EDIT_SIZE` | `10MB` | Maximum editable file size. |
-| `WORKSPACE_BASE` | `/opt/data/workspace` | Base directory for workspace browsing. |
+## 🤝 Contributing
 
-### CLI Commands
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-| Command                           | Description                        |
-| --------------------------------- | ---------------------------------- |
-| `hermes-web-ui start`             | Start in background (daemon mode)  |
-| `hermes-web-ui start --port 9000` | Start on custom port               |
-| `hermes-web-ui stop`              | Stop background process            |
-| `hermes-web-ui restart`           | Restart background process         |
-| `hermes-web-ui status`            | Check if running                   |
-| `hermes-web-ui update`            | Update to latest version & restart |
-| `hermes-web-ui upgrade`           | Alias for `update`                 |
-| `hermes-web-ui -v`                | Show version number                |
-| `hermes-web-ui -h`                | Show help message                  |
+## 📄 License
 
-`update` / `upgrade` first attempt `npm cache clean --force`, then run `npm install -g hermes-web-ui@latest` and restart. Cache cleanup is best-effort; if it fails, the updater continues with the install.
+MIT License - see [LICENSE](LICENSE)
 
-### Auto Configuration
+## 🔗 Links
 
-On startup the BFF server automatically:
-
-- Initializes Web UI data directories, local databases, and bundled skills
-- Starts the Hermes agent bridge used by `/chat-run`
-- Opens browser on successful startup
+- [GitHub Repository](https://github.com/HYMichellelxdd/container-audit)
+- [PyPI Package](https://pypi.org/project/container-audit/)
+- [Issue Tracker](https://github.com/HYMichellelxdd/container-audit/issues)
 
 ---
 
-## Development
-
-```bash
-git clone https://github.com/EKKOLearnAI/hermes-web-ui.git
-cd hermes-web-ui
-npm install
-npm run dev
-```
-
-- Frontend: http://localhost:5173
-- BFF Server: http://localhost:8648
-
-```bash
-npm run build   # outputs to dist/
-```
-
-See [DEVELOPMENT.md](./DEVELOPMENT.md) for project development guidelines.
-
-## Architecture
-
-```
-Browser → BFF (Koa, :8648) → Socket.IO /chat-run
-                ↓
-        Hermes agent bridge → Hermes Agent runtime
-                ↓
-           Hermes CLI / profiles
-           profile config.yaml    (channel/provider behavior)
-           profile auth.json      (credential pool)
-           Tencent iLink API      (WeChat QR login)
-```
-
-The frontend is designed with **multi-agent extensibility** — all Hermes-specific code is namespaced under `hermes/` directories (API, components, views, stores), making it straightforward to add new agent integrations alongside.
-
-The BFF layer handles Socket.IO chat streaming, the Hermes agent bridge, profile-aware file upload and path-based download (multi-backend: local/Docker/SSH/Singularity), session CRUD, account- and profile-scoped management, config/credential management, WeChat QR login, model discovery, skills/memory management, log reading, and static file serving.
-
-## Tech Stack
-
-**Frontend:** Vue 3 + TypeScript + Vite + Naive UI + Pinia + Vue Router + vue-i18n + SCSS + markdown-it + highlight.js
-
-**Backend:** Koa 2 (BFF server) + node-pty (web terminal)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=EKKOLearnAI/hermes-web-ui&type=Date)](https://star-history.com/#EKKOLearnAI/hermes-web-ui&Date)
-
-<!-- If the chart above doesn't load, visit https://star-history.com/#EKKOLearnAI/hermes-web-ui -->
-
-## License
-
-[BSL-1.1](./LICENSE)
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/HYMichellelxdd">HYMichellexdd</a>
+</p>
