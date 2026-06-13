@@ -1,0 +1,57 @@
+{
+  "target": "my-web-app",
+  "scan_type": "docker",
+  "score": 35,
+  "summary": {
+    "critical": 2,
+    "high": 3,
+    "medium": 2,
+    "low": 1,
+    "passed": 6,
+    "failed": 8,
+    "warnings": 1
+  },
+  "findings": [
+    {
+      "check_id": "DOCKER-001",
+      "title": "Privileged container",
+      "severity": "critical",
+      "status": "fail",
+      "description": "Container is running in privileged mode, giving it full host access.",
+      "remediation": "Remove --privileged flag. Use specific capabilities instead.",
+      "evidence": "Privileged: True"
+    },
+    {
+      "check_id": "DOCKER-002",
+      "title": "Docker socket mounted",
+      "severity": "critical",
+      "status": "fail",
+      "description": "Docker socket is mounted into the container, allowing container escape.",
+      "remediation": "Avoid mounting Docker socket. Use Docker-in-Docker or rootless Docker."
+    },
+    {
+      "check_id": "DOCKER-004",
+      "title": "Dangerous capabilities added",
+      "severity": "high",
+      "status": "fail",
+      "description": "Dangerous capabilities detected: SYS_ADMIN, NET_ADMIN",
+      "remediation": "Remove unnecessary capabilities. Use --cap-drop ALL --cap-add <specific>."
+    },
+    {
+      "check_id": "DOCKER-006",
+      "title": "Secrets in environment variables",
+      "severity": "high",
+      "status": "fail",
+      "description": "Potential secrets found in env vars: DB_PASSWORD, API_KEY",
+      "remediation": "Use Docker secrets, mounted files, or a secrets manager instead."
+    },
+    {
+      "check_id": "DOCKER-003",
+      "title": "Running as root",
+      "severity": "medium",
+      "status": "fail",
+      "description": "Container runs as root (User: not set).",
+      "remediation": "Set USER directive in Dockerfile or --user in docker run."
+    }
+  ]
+}
