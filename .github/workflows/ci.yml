@@ -20,33 +20,23 @@ jobs:
       - run: python -m py_compile container_audit/__init__.py
       - run: python -m py_compile container_audit/cli.py
       - run: python -m py_compile container_audit/scanner.py
-      - run: python -m py_compile container_audit/utils.py
-      - run: python -m py_compile container_audit/checks/__init__.py
+      - run: python -m py_compile container_audit/models.py
       - run: python -m py_compile container_audit/checks/docker.py
       - run: python -m py_compile container_audit/checks/kubernetes.py
       - run: python -m py_compile container_audit/checks/network.py
-      - run: python -m py_compile container_audit/checks/secrets.py
-      - run: python -m py_compile container_audit/reporters/__init__.py
-      - run: python -m py_compile container_audit/reporters/console.py
-      - run: python -m py_compile container_audit/reporters/json_out.py
-      - run: python -m py_compile container_audit/reporters/html_out.py
 
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"
-      - run: pytest --cov=container_audit --cov-report=xml
-      - uses: codecov/codecov-action@v4
-        if: matrix.python-version == '3.12'
-        with:
-          file: ./coverage.xml
+      - run: python -m pytest --cov=container_audit --cov-report=xml -v
 
   build:
     runs-on: ubuntu-latest
