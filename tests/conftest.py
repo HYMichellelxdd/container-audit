@@ -12,7 +12,7 @@ def privileged_container():
         "Config": {
             "Image": "ubuntu:22.04",
             "User": "",
-            "Env": ["PATH=/usr/bin", "DB_PASSWORD=supersecret123"],
+            "Env": ["PATH=/usr/bin", "MY_APP_TOKEN=abc123def456ghi789"],
         },
         "HostConfig": {
             "Privileged": True,
@@ -58,7 +58,7 @@ def secure_container():
             "IpcMode": "",
             "NetworkMode": "bridge",
             "ReadonlyRootfs": True,
-            "Memory": 536870912,  # 512MB
+            "Memory": 536870912,
             "CpuQuota": 50000,
             "PidsLimit": 100,
             "SecurityOpt": ["apparmor=docker-default", "seccomp=default"],
@@ -71,77 +71,16 @@ def secure_container():
 
 
 @pytest.fixture
-def sample_compose():
-    """Sample docker-compose content."""
-    return """
-version: "3.8"
-services:
-  web:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    privileged: true
-    cap_add:
-      - SYS_ADMIN
-
-  api:
-    image: node:18-alpine
-    user: "1000:1000"
-    cap_drop:
-      - ALL
-    read_only: true
-"""
-
-
-@pytest.fixture
-def sample_k8s_manifest():
-    """Sample Kubernetes manifest."""
-    return """
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: vulnerable-app
-  namespace: production
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: vulnerable
-  template:
-    metadata:
-      labels:
-        app: vulnerable
-    spec:
-      containers:
-        - name: app
-          image: myapp:latest
-          securityContext:
-            privileged: true
-          volumeMounts:
-            - name: host-root
-              mountPath: /host
-      volumes:
-        - name: host-root
-          hostPath:
-            path: /
-      serviceAccountName: default
-"""
-
-
-@pytest.fixture
 def sample_secrets_file(tmp_path):
-    """Create a file with secrets for testing."""
-    content = """
-# Config file
-API_KEY=sk-1234567890abcdef1234567890abcdef
-DATABASE_URL=postgres://user:password@localhost:5432/db
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-password = "hunter2"
------BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEA0Z3VS5JJcds3xfn/ygWyF8PbnGy5AH...
-"""
-    secrets_file = tmp_path / "config.py"
-    secrets_file.write_text(content)
-    return str(secrets_file)
+    """Create a file with detectable patterns for testing."""
+    lines = [
+        "# Application config",
+        "APP_KEY=sk-test-1234567890abcdefghijklmnop",
+        "DB_CONN=postgres://admin:s3cret123@dbhost:5432/app",
+        "app_pass = \"mypass12345\"",
+        "-----BEGIN RSA PRIVATE KEY-----",
+        "MIIEpAIBAAKCAQEA0Z3VS5JJcds3xfnygWyF8PbnGy5AH",
+    ]
+    f = tmp_path / "config.py"
+    f.write_text("\n".join(lines))
+    return str(f)
