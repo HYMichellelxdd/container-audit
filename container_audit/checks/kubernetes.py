@@ -34,7 +34,7 @@ class KubernetesChecks:
         # Security context best practices
         if pod_spec:
             for c in pod_spec.get("containers", []):
-                findings.extend(self._check_security_context(c, kind))
+                findings.extend(self.check_security_context(c, kind))
 
         # NetworkPolicy check
         if kind == "NetworkPolicy":
