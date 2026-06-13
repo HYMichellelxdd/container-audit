@@ -35,8 +35,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -e ".[dev]"
-      - run: python -m pytest --cov=container_audit --cov-report=xml -v
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pytest pytest-cov pyyaml rich jinja2
+          pip install -e .
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short
 
   build:
     runs-on: ubuntu-latest
